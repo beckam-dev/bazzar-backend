@@ -24,14 +24,17 @@ public class InventoryMovement {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private MovementType type;
-    // private SaleItem saleItem;
+    @OneToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "sale_item_id")
+    private SaleItem saleItem;
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    public InventoryMovement(Inventory inventory, int quantity, MovementType type) {
+    public InventoryMovement(Inventory inventory, int quantity, MovementType type, SaleItem saleItem) {
         this.inventory = inventory;
         this.quantity = quantity;
         this.type = type;
+        this.saleItem = saleItem;
     }
 
     @PrePersist

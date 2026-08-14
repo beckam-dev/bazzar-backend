@@ -8,6 +8,8 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -27,13 +29,17 @@ public class Sale {
     @Setter
     @Column(nullable = false)
     private BigDecimal total = BigDecimal.ZERO;
+    @Setter
+    @Enumerated(EnumType.STRING)
+    @Column(name = "payment_status", nullable = false)
     private PaymentStatus paymentStatus;
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-    @Column(name = "deleted_at")
-    private LocalDateTime deletedAt;
+
+    @OneToMany(mappedBy = "sale", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SaleItem> items = new ArrayList<>();
 
     public Sale(Customer customer, Employee employee, PaymentStatus paymentStatus) {
         this.customer = customer;
@@ -51,14 +57,6 @@ public class Sale {
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
-    }
-
-    public void delete() {
-        this.deletedAt = LocalDateTime.now();
-    }
-
-    public void restore() {
-        this.deletedAt = null;
     }
 
 }
