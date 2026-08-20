@@ -4,7 +4,6 @@ import com.becksoft.bazzar.enums.EmployeeDocument;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 
@@ -27,14 +26,13 @@ public class Employee {
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false, unique = true, updatable = false)
     private User user;
-    @Column(nullable = false, length = 100, updatable = false)
+    @Column(nullable = false, length = 100)
     private String name;
     @Enumerated(EnumType.STRING)
-    @Column(name = "document_type", nullable = false, updatable = false)
+    @Column(name = "document_type", nullable = false)
     private EmployeeDocument documentType;
-    @Column(name = "document_number", length = 20, nullable = false, updatable = false)
+    @Column(name = "document_number", length = 20, nullable = false)
     private String documentNumber;
-    @Setter
     @Column(length = 20)
     private String phone;
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -49,6 +47,16 @@ public class Employee {
         this.name = name;
         this.documentType = documentType;
         this.documentNumber = documentNumber;
+        this.phone = phone;
+    }
+
+    public void updateIdentification(String name, EmployeeDocument documentType, String documentNumber) {
+        this.name = name;
+        this.documentType = documentType;
+        this.documentNumber = documentNumber;
+    }
+
+    public void updatePhone(String phone) {
         this.phone = phone;
     }
 
