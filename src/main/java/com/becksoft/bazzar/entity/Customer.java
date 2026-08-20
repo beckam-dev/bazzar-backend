@@ -3,7 +3,6 @@ package com.becksoft.bazzar.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 
@@ -18,7 +17,6 @@ public class Customer {
     private Long id;
     @Column(nullable = false, length = 100)
     private String name;
-    @Setter
     @Column(length = 15)
     private String phone;
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -30,6 +28,14 @@ public class Customer {
 
     public Customer(String name, String phone) {
         this.name = name;
+        this.phone = phone;
+    }
+
+    public void updateName(String name) {
+        this.name = name;
+    }
+
+    public void updatePhone(String phone) {
         this.phone = phone;
     }
 
