@@ -3,7 +3,6 @@ package com.becksoft.bazzar.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 
@@ -16,20 +15,46 @@ public class Inventory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "product_id", nullable = false, unique = true)
+    @JoinColumn(name = "product_id", nullable = false, unique = true, updatable = false)
     private Product product;
-    @Setter
+
     @Column(nullable = false)
-    private int quantity;
+    private int stock;
+
+    @Version
+    private Long version;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    public Inventory(Product product, int quantity) {
+    public Inventory(Product product, int stock) {
+        if (stock < 0) {
+            throw new IllegalArgumentException("El stock inicial no puede ser negativo");
+        }
         this.product = product;
-        this.quantity = quantity;
+        this.stock = stock;
+    }
+
+    public void increaseStock(int amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("La cantidad a incrementar debe ser mayor a 0");
+        }
+        this.stock += amount;
+    }
+
+    public void decreaseStock(int amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("La cantidad a descontar debe ser mayor a 0");
+        }
+        if (this.stock < amount) {
+            throw new IllegalStateException("Stock insuficiente. Stock actual: " + this.stock + ", solicitado: " + amount);
+        }
+        this.stock -= amount;
     }
 
     @PrePersist
@@ -43,5 +68,4 @@ public class Inventory {
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
-
 }
